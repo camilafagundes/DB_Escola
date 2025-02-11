@@ -1,0 +1,118 @@
+O modelo incluirá as seguintes entidades principais:
+
+1. Alunos
+2. Professores
+3. Cursos
+4. Disciplinas
+5. Matrículas
+6. Turmas
+7. Avaliações
+
+Criação do Esquema do Banco de Dados:
+
+CREATE DATABASE escola_db;
+USE escola_db;
+
+-- Tabela de Alunos
+CREATE TABLE Alunos (
+    AlunoID INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    DataNascimento DATE,
+    Email VARCHAR(100),
+    Telefone VARCHAR(20)
+);
+
+-- Tabela de Professores
+CREATE TABLE Professores (
+    ProfessorID INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Email VARCHAR(100),
+    Telefone VARCHAR(20),
+    Departamento VARCHAR(50)
+);
+
+-- Tabela de Cursos
+CREATE TABLE Cursos (
+    CursoID INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Descricao TEXT
+);
+
+-- Tabela de Disciplinas
+CREATE TABLE Disciplinas (
+    DisciplinaID INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    CursoID INT,
+    FOREIGN KEY (CursoID) REFERENCES Cursos(CursoID)
+);
+
+-- Tabela de Turmas
+CREATE TABLE Turmas (
+    TurmaID INT PRIMARY KEY,
+    DisciplinaID INT,
+    ProfessorID INT,
+    Ano INT,
+    Semestre ENUM('1', '2'),
+    FOREIGN KEY (DisciplinaID) REFERENCES Disciplinas(DisciplinaID),
+    FOREIGN KEY (ProfessorID) REFERENCES Professores(ProfessorID)
+);
+
+-- Tabela de Matrículas
+CREATE TABLE Matriculas (
+    MatriculaID INT PRIMARY KEY,
+    AlunoID INT,
+    TurmaID INT,
+    DataMatricula DATE,
+    FOREIGN KEY (AlunoID) REFERENCES Alunos(AlunoID),
+    FOREIGN KEY (TurmaID) REFERENCES Turmas(TurmaID)
+);
+
+-- Tabela de Avaliações
+CREATE TABLE Avaliacoes (
+    AvaliacaoID INT PRIMARY KEY,
+    MatriculaID INT,
+    Nota DECIMAL(5, 2),
+    DataAvaliacao DATE,
+    FOREIGN KEY (MatriculaID) REFERENCES Matriculas(MatriculaID)
+);
+
+Inserção de Dados para Testes:
+
+INSERT INTO Alunos (AlunoID, Nome, DataNascimento, Email, Telefone) VALUES
+(1, 'Carlos Silva', '2005-01-15', 'carlos.silva@example.com', '123456789'),
+(2, 'Ana Oliveira', '2004-08-30', 'ana.oliveira@example.com', '987654321');
+
+INSERT INTO Professores (ProfessorID, Nome, Email, Telefone, Departamento) VALUES
+(1, 'João Santos', 'joao.santos@example.com', '123456789', 'Matemática'),
+(2, 'Maria Souza', 'maria.souza@example.com', '987654321', 'História');
+
+INSERT INTO Cursos (CursoID, Nome, Descricao) VALUES
+(1, 'Ensino Médio', 'Curso de Ensino Médio'),
+(2, 'Ensino Fundamental', 'Curso de Ensino Fundamental');
+
+INSERT INTO Disciplinas (DisciplinaID, Nome, CursoID) VALUES
+(1, 'Matemática', 1),
+(2, 'História', 2);
+
+INSERT INTO Turmas (TurmaID, DisciplinaID, ProfessorID, Ano, Semestre) VALUES
+(1, 1, 1, 2025, '1'),
+(2, 2, 2, 2025, '1');
+
+INSERT INTO Matriculas (MatriculaID, AlunoID, TurmaID, DataMatricula) VALUES
+(1, 1, 1, '2025-02-01'),
+(2, 2, 2, '2025-02-02');
+
+INSERT INTO Avaliacoes (AvaliacaoID, MatriculaID, Nota, DataAvaliacao) VALUES
+(1, 1, 9.5, '2025-03-10'),
+(2, 2, 8.0, '2025-03-11');
+
+Detalhamento do Modelo EER:
+
+1. Relacionamentos:
+Um aluno pode estar matriculado em várias turmas.
+Um professor pode ministrar várias disciplinas, mas uma disciplina é ministrada por um único professor em uma turma específica.
+Cada curso pode ter várias disciplinas.
+
+2. Constraints:
+As chaves primárias são usadas para identificar unicamente cada registro.
+As chaves estrangeiras asseguram a integridade referencial entre as tabelas.
